@@ -19,17 +19,20 @@ public class PickupScript : MonoBehaviour {
     [SerializeField] private AudioSource pickupSound;
     [SerializeField] private SpriteRenderer spriteRenderer;
 
+    //Set up default variables
     private void Awake() {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         optionsScript = GameObject.Find("GameManager").GetComponent<OptionsScript>();
         shootingScript = GameObject.Find("PlayerObject").GetComponent<ShootingScript>();
     }
 
+    //Set up audio
     private void Start() {
         gameManager.AddSound(pickupSound);
         pickupSound.volume = (optionsScript.sfxVolume * (optionsScript.masterVolumeSlider.value / 100)) / 100;
     }
 
+    //Decrease the items life over time
     private void Update() {
         itemLife -= Time.deltaTime;
 
@@ -38,6 +41,7 @@ public class PickupScript : MonoBehaviour {
         }
     }
 
+    //Detect if the player has collided with the object
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision.CompareTag("Player")) {
             StartCoroutine(HitCoroutine());
@@ -50,8 +54,9 @@ public class PickupScript : MonoBehaviour {
         pickupParticles.Play();
 
         if (pickupType == "Ammo") {
-            shootingScript.storedAmmo += ammoToAdd;
+            shootingScript.storedAmmo += ammoToAdd; //Add ammo
 
+            //If the ammo is above the maximum ammo reset it back down to max ammo
             if (shootingScript.storedAmmo > shootingScript.maxAmmo) {
                 shootingScript.storedAmmo = shootingScript.maxAmmo;
             }
@@ -59,8 +64,8 @@ public class PickupScript : MonoBehaviour {
             shootingScript.maxAmmoText.text = shootingScript.storedAmmo.ToString();
         }
         else if (pickupType == "Health") {
-            gameManager.playerHealth = 100f;
-            gameManager.UpdateHealthSlider("Green");
+            gameManager.playerHealth = 100f; //Reset the health back to full
+            gameManager.UpdateHealthSlider("Green"); //Flash a green filter on the screen
         }
 
         yield return new WaitUntil(() => pickupParticles.isPlaying == false);

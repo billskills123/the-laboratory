@@ -14,11 +14,13 @@ public class OpeningSceneScript : MonoBehaviour {
     private bool loaded = false;
     private bool funcCalled = false;
 
+    //Fade in the music
     void Start() {
         audioFadeScript.AudioFade("Open", audioSource, 2.0f, PlayerPrefs.GetFloat("MusicVolume") / 100);
         StartCoroutine(OpenCloseLogo());
     }
 
+    //Fade the logo onto the screen, fade it out, and then fade in the title
     private IEnumerator OpenCloseLogo() {
         yield return new WaitForSeconds(0.75f);
         canvasFadeScript.CanvasFade("Open", logo, 1.0f);
@@ -38,13 +40,15 @@ public class OpeningSceneScript : MonoBehaviour {
         loaded = true;
     }
 
+    //Check if a player has pressed any key
     private void Update() {
-        if (Keyboard.current.anyKey.isPressed && loaded == true && funcCalled == false) {
-            funcCalled = true;
+        if (Keyboard.current.anyKey.isPressed && loaded == true && funcCalled == false || Mouse.current.IsPressed() && loaded == true && funcCalled == false) {
+            funcCalled = true; //Stops repeatedly spamming the function
             StartCoroutine(LoadMainMenu());
         }
     }
 
+    //Loads in the main menu
     private IEnumerator LoadMainMenu() {
         canvasFadeScript.CanvasFade("Close", titleScreen, 1.0f);
         audioFadeScript.AudioFade("Close", audioSource, 1.0f, 1);

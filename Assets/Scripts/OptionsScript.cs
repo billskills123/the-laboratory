@@ -27,6 +27,7 @@ public class OptionsScript : MonoBehaviour {
     [SerializeField] private TMP_Text sfxVolumeSliderText;
     public Slider sfxVolumeSlider;
 
+    //Set up the default values
     private void Start() {
         fullscreen = Screen.fullScreen;
         resolution = Screen.currentResolution.ToString();
@@ -43,19 +44,21 @@ public class OptionsScript : MonoBehaviour {
         sfxVolumeSlider.value = sfxVolume;
 
         foreach (var musicAudio in musicSources) {
-            musicAudio.volume = (musicVolume * (masterVolumeSlider.value / 100)) / 100;
+            musicAudio.volume = (musicVolume * (masterVolumeSlider.value / 100)) / 100; //Set all music audio to the desired volume
         }
 
         foreach (var sfxAudio in sfxSources) {
-            sfxAudio.volume = (sfxVolume * (masterVolumeSlider.value / 100)) / 100;
+            sfxAudio.volume = (sfxVolume * (masterVolumeSlider.value / 100)) / 100; //Set all sfx to the desired volume
         }
     }
 
+    //Set the game full screen
     public void SetFullScreen(bool toggleValue) {
         Screen.fullScreen = toggleValue;
         fullscreen = toggleValue;
     }
 
+    //Set the resolution
     public void SetResolution(int resolutionNumber) {
         switch (resolutionNumber) { 
             case 0:
@@ -85,6 +88,7 @@ public class OptionsScript : MonoBehaviour {
         }
     }
 
+    //Update the master volume
     public void MasterSliderChanged(float value) {
         masterVolumeSliderText.text = value.ToString() + "%";
         masterVolume = value;
@@ -101,6 +105,7 @@ public class OptionsScript : MonoBehaviour {
         }
     }
 
+    //Update only the music
     public void MusicSliderChanged(float value) {
         musicVolumeSliderText.text = value.ToString() + "%";
         musicVolume = value;
@@ -111,6 +116,7 @@ public class OptionsScript : MonoBehaviour {
         }
     }
 
+    //Update only the SFX
     public void SFXSliderChanged(float value) {
         sfxVolumeSliderText.text = value.ToString() + "%";
         sfxVolume = value;

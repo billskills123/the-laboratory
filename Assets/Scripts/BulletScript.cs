@@ -11,6 +11,7 @@ public class BulletScript : MonoBehaviour {
     private Vector3 mousePos;
     private Rigidbody2D rb;
 
+    //Create a new bullet and set it to travel away from the player towards the mouse 
     private void Start() {
         rb = GetComponent<Rigidbody2D>();
         mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
@@ -25,6 +26,7 @@ public class BulletScript : MonoBehaviour {
         Destroy(gameObject, 2.5f); //Destroys the bullets after a delay
     }
 
+    //Disable the bullet and any other visible components on contact
     private void OnCollisionEnter2D(Collision2D collision) {
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
         gameObject.GetComponent<BoxCollider2D>().enabled = false;
@@ -32,6 +34,7 @@ public class BulletScript : MonoBehaviour {
         StartCoroutine(BulletDeath());
     }
 
+    //Play a particle effect and then destroy the bullet
     private IEnumerator BulletDeath() {
         bulletParticle.Play();
         yield return new WaitUntil(() => bulletParticle.isPlaying == false);

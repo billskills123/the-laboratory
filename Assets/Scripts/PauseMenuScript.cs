@@ -34,6 +34,7 @@ public class PauseMenuScript : MonoBehaviour {
         gameManager.ClosePauseMenu();
     }
 
+    //Move the pause menu on and off the screen
     private IEnumerator MovePauseMenu(string lerpType, Image uiObject, Vector2 endPosition) {
         if (lerpType == "Open") {
             endPosition = new Vector2(0, 0);
@@ -67,12 +68,15 @@ public class PauseMenuScript : MonoBehaviour {
         StartCoroutine(ExitGameCoroutine());
     }
 
+    //Used for fading a black background onto the screen and then returnning back to the main menu
     private IEnumerator ExitGameCoroutine() {
         StartCoroutine(MovePauseMenu("Close", pauseMenu, Vector2.zero));
         yield return new WaitUntil(() => pauseMenu.GetComponent<RectTransform>().anchoredPosition.y >= 1020);
+
         startCanvas.SetActive(true);
         canvasFadeScript.CanvasFade("Open", blackScreen, 2.5f);
         yield return new WaitUntil(() => blackScreen.GetComponent<CanvasGroup>().alpha >= 1);
+
         audioFadeScript.AudioFade("Close", musicAudioSource, 1.0f, 1);
         yield return new WaitUntil(() => musicAudioSource.volume == 0);
         SceneManager.LoadScene("MainMenu");

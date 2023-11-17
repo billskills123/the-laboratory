@@ -69,15 +69,16 @@ public class GameManager : MonoBehaviour {
         StartCoroutine(LoadEndlessMode());
     }
 
+    //Loads the player into the endless mode
     private IEnumerator LoadEndlessMode() {
         yield return new WaitForSeconds(1.5f);
         audioFadeScript.AudioFade("Open", gameMusic, 2.5f, PlayerPrefs.GetFloat("MusicVolume") / 100);
         startCanvasFadeScript.CanvasFade("Close", startBackground, 2.5f);
-        yield return new WaitUntil(() => startBackground.GetComponent<CanvasGroup>().alpha == 0);
+        yield return new WaitUntil(() => startBackground.GetComponent<CanvasGroup>().alpha == 0); //Close the black background and just display the text
         yield return new WaitForSeconds(2f);
 
         startCanvasFadeScript.CanvasFade("Close", startText, 2.5f);
-        yield return new WaitUntil(() => startText.GetComponent<CanvasGroup>().alpha == 0);
+        yield return new WaitUntil(() => startText.GetComponent<CanvasGroup>().alpha == 0); //Wait until the text has faded out and then start the game
 
         startCanvas.SetActive(false);
         mainCanvas.SetActive(true);
@@ -102,17 +103,17 @@ public class GameManager : MonoBehaviour {
 
     public void UpdateHealthSlider(string colorText) {
         healthSlider.value = playerHealth;
-        StartCoroutine(FlashDamageFilter(colorText));
+        StartCoroutine(FlashDamageFilter(colorText)); //Flashes a red filter on the screen
     }
 
     private IEnumerator FlashDamageFilter(string colorText) {
         damageFilter.SetActive(true);
 
         if (colorText == "Green") {
-            damageFilter.GetComponent<Image>().color = new Color(0, 255, 0, 0.05f);
+            damageFilter.GetComponent<Image>().color = new Color(0, 255, 0, 0.05f); //Flash a green filter
         }
         else if(colorText == "Red") {
-            damageFilter.GetComponent<Image>().color = new Color(255, 0, 0, 0.05f);
+            damageFilter.GetComponent<Image>().color = new Color(255, 0, 0, 0.05f); //Flash a red filter
         }
         mainCanvasFadeScript.CanvasFade("Open", damageFilter, 3.0f);
         yield return new WaitUntil(() => damageFilter.GetComponent<CanvasGroup>().alpha == 1);
@@ -123,13 +124,14 @@ public class GameManager : MonoBehaviour {
 
     public void AddScore() {
         score++;
-        scoreUI.GetComponent<TMP_Text>().text = "Score: " + score.ToString();
+        scoreUI.GetComponent<TMP_Text>().text = "Score: " + score.ToString(); //Update the text according to the score
     }
 
     public void PlayerDeath() {
         StartCoroutine(PlayerDeathCoroutine());
     }
 
+    //Stops the game and displays the death UI
     private IEnumerator PlayerDeathCoroutine() {
         healthSliderFill.SetActive(false);
         inGame = false;
@@ -139,6 +141,7 @@ public class GameManager : MonoBehaviour {
         playerParticles.Play();
         yield return new WaitUntil(() => playerParticles.isPlaying == false);
 
+        //Remove all enemies
         foreach (var enemy in enemyList) {
             Destroy(enemy);
             enemiesActive--;
@@ -154,6 +157,7 @@ public class GameManager : MonoBehaviour {
         StartCoroutine(PlayerDeathUI());
     }
 
+    //Opens the death UI and closes the main game UI
     private IEnumerator PlayerDeathUI() {
         playerDeathCanvas.SetActive(true);
         playerDeathCanvasFadeScript.CanvasFade("Open", deathBlackBackground, 5f);
@@ -170,6 +174,7 @@ public class GameManager : MonoBehaviour {
         OpenDeathUI();
     }
 
+    //Opens the death UI and displays the relevant score and time taken
     private void OpenDeathUI() {
         deathScoreText.text = "Score: " + score;
         float minutes = Mathf.FloorToInt(timer / 60);
@@ -195,10 +200,12 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    //Spawn enemies at a random location around the player
     private void SpawnEnemy() {
         GameObject tempEnemy = Instantiate(enemyPrefab, new Vector3(player.transform.position.x + Random.Range(-30f, 30f), player.transform.position.y + Random.Range(-30f, 30f), player.transform.position.z), Quaternion.identity, enemyParent.transform);
         enemyList.Add(tempEnemy);
 
+        //Destroys the enemies if they spawn too close to the player
         if (Vector3.Distance(tempEnemy.transform.position, player.transform.position) < 10f){
             Destroy(tempEnemy);
             enemiesActive--;
@@ -206,10 +213,13 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    //Add sounds to the stored list of sound emitters
     public void AddSound(AudioSource audioSource) {
         optionsScript.sfxSources.Add(audioSource);
     }
 
+
+    //Remove sounds to the stored list of sound emitters
     public void RemoveSound(AudioSource audioSource) {
         optionsScript.sfxSources.Remove(audioSource);
     }

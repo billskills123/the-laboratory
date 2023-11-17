@@ -27,6 +27,7 @@ public class ShootingScript : MonoBehaviour {
     private float timer;
     private bool canFire;
 
+    //Set up default values
     private void Start() {
         canFire = true;
         timer = 0;
@@ -35,6 +36,7 @@ public class ShootingScript : MonoBehaviour {
         maxAmmoText.text = storedAmmo.ToString();
     }
 
+    //Aim the gun towards the mouse
     private void Update() {
         if (gameManager.inGame == true) {
             mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
@@ -42,6 +44,7 @@ public class ShootingScript : MonoBehaviour {
             float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
             bulletRotation.transform.rotation = Quaternion.Euler(0, 0, rotZ);
 
+            //Timer used for ensuring there is a delay between player shots
             timer += Time.deltaTime;
             if (timer > timeBetweenFiring) {
                 canFire = true;
@@ -50,6 +53,7 @@ public class ShootingScript : MonoBehaviour {
         }
     }
 
+    //Called when the player presses the shoot button
     private void OnShoot() {
         if(canFire == true && gameManager.inGame == true && currentClipSize != 0) {
             canFire = false;
@@ -59,17 +63,17 @@ public class ShootingScript : MonoBehaviour {
             clipAmmoText.text = currentClipSize.ToString();
 
             if (currentClipSize == 0 && storedAmmo > 0) {
-                StartCoroutine(ReloadCoroutine());
+                StartCoroutine(ReloadCoroutine()); //Automatically reload the gun if the last bullet was fired and there is available ammo
             }
         }
         else if (canFire == true && gameManager.inGame == true && currentClipSize == 0) {
-            gunSounds[2].Play();
+            gunSounds[2].Play(); //Plays a blank fire sound if the current clip is empty
         }
     }
 
     private void OnReload() {
         if (canFire == true && gameManager.inGame == true && storedAmmo > 0 && currentClipSize != clipSize) {
-            StartCoroutine(ReloadCoroutine());
+            StartCoroutine(ReloadCoroutine()); //Reload the gun only if there is available ammo and the clip is not full
         }
     }
 
@@ -77,11 +81,12 @@ public class ShootingScript : MonoBehaviour {
         canFire = false;
         gunSounds[1].Play();
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f); //Adds a little delay into the reloading process -- Makes sure reloads aren't instant
         yield return new WaitUntil(() => gunSounds[1].isPlaying == false);
 
         int ammoDifference = clipSize - currentClipSize;
 
+        //Either completely reload the gun if possible if not use all remaining bullets
         if (ammoDifference > 0 && storedAmmo >= ammoDifference) {
             storedAmmo -= ammoDifference;
             currentClipSize += ammoDifference;

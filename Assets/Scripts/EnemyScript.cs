@@ -33,20 +33,21 @@ public class EnemyScript : MonoBehaviour {
     [SerializeField] private GameObject ammoPickup;
     [SerializeField] private GameObject healthPickup;
 
+    //Detects what the enemy has collided with
     private void OnCollisionEnter2D(Collision2D collision) {
         if (collision.gameObject.CompareTag("Player")) {
-            StartCoroutine(RemovePlayerHealth());
+            StartCoroutine(RemovePlayerHealth()); //Removes players health
         }
         else if (collision.gameObject.CompareTag("Bullet")) {
             if (enemyHealth > 0) {
-                enemyHealth -= 50f;
+                enemyHealth -= 50f; //Remove 50 health
 
                 if(enemyHealth == 0) {
-                    deathAudioSource.Play();
+                    deathAudioSource.Play(); //Play the death sound
                     StartCoroutine(Death());
                 } 
                 else {
-                    enemy.GetComponent<AudioSource>().Play();
+                    enemy.GetComponent<AudioSource>().Play(); //Play the injured sound
                 }
             }
         }
@@ -54,10 +55,11 @@ public class EnemyScript : MonoBehaviour {
 
     private void OnCollisionStay2D(Collision2D collision) {
         if (collision.gameObject.CompareTag("Player")) {
-            StartCoroutine(RemovePlayerHealth());
+            StartCoroutine(RemovePlayerHealth()); //Continues to remove health if in contact with the player
         }
     }
 
+    //Gradually removes the players health
     private IEnumerator RemovePlayerHealth() {
         if (gameManager.playerHealth > 0 && canRemoveHealth == true) {
             player.GetComponent<AudioSource>().Play();
@@ -74,6 +76,7 @@ public class EnemyScript : MonoBehaviour {
         }
     }
 
+    //Set up base variables
     private void Awake() {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         optionsScript = GameObject.Find("GameManager").GetComponent<OptionsScript>();
@@ -81,6 +84,7 @@ public class EnemyScript : MonoBehaviour {
         pickupsParent = GameObject.Find("Pickups");
     }
 
+    //Sets up audio
     private void Start() {
         gameManager.AddSound(hitAudioSource);
         gameManager.AddSound(deathAudioSource);
@@ -96,11 +100,13 @@ public class EnemyScript : MonoBehaviour {
         }
     }
 
+    //Move towards the player
     private void EnemyMovement() {
         float step = enemySpeed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, player.transform.position, step);
     }
 
+    //Rotate to face the player
     private void EnemyRotation() {
         Vector3 playerPosition = player.transform.position;
         Vector3 direction = playerPosition - transform.position;
@@ -115,13 +121,13 @@ public class EnemyScript : MonoBehaviour {
         enemy.GetComponent<Collider2D>().enabled = false;
         enemySprite.GetComponent<SpriteRenderer>().enabled = false;
 
-        int randomNumber = Random.Range(1, 10);
+        int randomNumber = Random.Range(1, 10); //Used for determing if a pickup should be spawned and if so what
 
         if (randomNumber <= 3) {
-            Instantiate(ammoPickup, enemy.transform.position, Quaternion.identity, pickupsParent.transform);
+            Instantiate(ammoPickup, enemy.transform.position, Quaternion.identity, pickupsParent.transform); //Spawn an ammo pick up
         }
         else if (randomNumber >= 4 && randomNumber <= 7) {
-            Instantiate(healthPickup, enemy.transform.position, Quaternion.identity, pickupsParent.transform);
+            Instantiate(healthPickup, enemy.transform.position, Quaternion.identity, pickupsParent.transform); //Spawn a health pick up
         }
 
         gameManager.AddScore();

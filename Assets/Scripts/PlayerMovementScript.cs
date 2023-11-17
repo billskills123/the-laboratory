@@ -25,19 +25,21 @@ public class PlayerMovementScript : MonoBehaviour {
 
     private void Update() {
         if (gameManager.inGame == true) {
-            transform.Translate(playerSpeed * Time.deltaTime * new Vector3(playerMoveValue.x, playerMoveValue.y, 0));
+            transform.Translate(playerSpeed * Time.deltaTime * new Vector3(playerMoveValue.x, playerMoveValue.y, 0)); //Moves based on the player move value
 
             Vector3 targetPosition = player.transform.position + offset;
-            mainCamera.transform.position = Vector3.SmoothDamp(mainCamera.transform.position, targetPosition, ref velocity, smoothTime);
+            mainCamera.transform.position = Vector3.SmoothDamp(mainCamera.transform.position, targetPosition, ref velocity, smoothTime); //Have the camera follow the player with a minor delay
 
             PlayerRotation();
         }
     }
 
+    //Called when the player presses a move button
     private void OnMove(InputValue value) {
         playerMoveValue = value.Get<Vector2>();
     }
 
+    //Rotate the player towards the mouse over time
     private void PlayerRotation() {
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
         Vector3 direction = mousePosition - player.transform.position;

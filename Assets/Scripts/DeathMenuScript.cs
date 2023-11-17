@@ -16,9 +16,11 @@ public class DeathMenuScript : MonoBehaviour {
         StartCoroutine(ReturnToMenuCoroutine());
     }
 
+    //Returns back to the main menu
     private IEnumerator ReturnToMenuCoroutine() {
         StartCoroutine(MoveDeathUI("Close", deathUI, Vector2.zero));
         yield return new WaitUntil(() => deathUI.GetComponent<RectTransform>().anchoredPosition.y >= 1020);
+
         audioFadeScript.AudioFade("Close", musicAudioSource, 1.0f, 1);
         yield return new WaitUntil(() => musicAudioSource.volume == 0);
         SceneManager.LoadScene("MainMenu");
@@ -28,9 +30,11 @@ public class DeathMenuScript : MonoBehaviour {
         StartCoroutine(RestartGameCoroutine());
     }
 
+    //Restarts the game
     private IEnumerator RestartGameCoroutine() {
         StartCoroutine(MoveDeathUI("Close", deathUI, Vector2.zero));
         yield return new WaitUntil(() => deathUI.GetComponent<RectTransform>().anchoredPosition.y >= 1020);
+
         audioFadeScript.AudioFade("Close", musicAudioSource, 1.0f, 1);
         yield return new WaitUntil(() => musicAudioSource.volume == 0);
         SceneManager.LoadScene("EndlessMode");
@@ -44,6 +48,7 @@ public class DeathMenuScript : MonoBehaviour {
         StartCoroutine(MoveDeathUI("Close", deathUI, Vector2.zero));
     }
 
+    //Used for moving the death UI on and off the screen
     private IEnumerator MoveDeathUI(string lerpType, Image uiObject, Vector2 endPosition) {
         if (lerpType == "Open") {
             endPosition = new Vector2(0, 0);
